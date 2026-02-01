@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Buckshot Roulette (Web Clone)</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Buckshot Roulette (Web Clone)</h1>
+    <div class="sub">Separate files HTML + CSS + modular JS (no frameworks).</div>
+  </div>
+  <div class="pill"><span>Repo-friendly:</span> <strong>GitHub Pages ready</strong></div>
+</header>
+
+<main>
+  <section class="card canvasWrap">
+    <div class="hd">
+      <h2>Table</h2>
+      <div class="row">
+        <span class="pill"><span id="phase">—</span></span>
+        <span class="pill">Shells left: <strong id="shellsLeft">0</strong></span>
+        <span class="pill">Known next: <strong id="knownNext">?</strong></span>
+      </div>
+    </div>
+    <div class="bd" style="padding:0">
+      <canvas id="c" width="1100" height="520"></canvas>
+      <div class="overlay">
+        <div class="row">
+          <button id="shootDealer" class="bad" disabled>Shoot Dealer</button>
+          <button id="shootSelf" class="warn" disabled>Shoot Self</button>
+          <button id="useMagnify" class="primary" disabled>🔍 Magnify</button>
+          <button id="useBeer" class="primary" disabled>🍺 Beer (rack +1 blank)</button>
+          <button id="useCigs" class="primary" disabled>🚬 Cigarettes (+1 HP)</button>
+        </div>
+        <div class="row">
+          <button id="newRound" class="good">New Round</button>
+          <button id="reset" class="primary">Reset Game</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="card">
+    <div class="hd">
+      <h2>Status</h2>
+      <div class="pill">Turn: <strong id="turn">—</strong></div>
+    </div>
+    <div class="bd">
+      <div class="grid2">
+        <div class="stat">
+          <div class="label">Player HP</div>
+          <div class="value" id="php">3</div>
+          <div class="bar"><div id="phpBar"></div></div>
+        </div>
+        <div class="stat">
+          <div class="label">Dealer HP</div>
+          <div class="value" id="dhp">3</div>
+          <div class="bar bad"><div id="dhpBar"></div></div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="stat">
+        <div class="label">Rack (unknown order)</div>
+        <div class="hint">In the real game you don’t see the exact order. This clone tracks it internally and only reveals what you learn.</div>
+        <div style="height:10px"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="pill">Live: <strong id="liveCount">0</strong></span>
+          <span class="pill">Blank: <strong id="blankCount">0</strong></span>
+          <span class="pill">Total: <strong id="totalCount">0</strong></span>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="stat">
+        <div class="label">Event Log</div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- IMPORTANT: use type=module for ES Modules -->
+<script type="module" src="./main.js"></script>
+
+</body>
+</html>
