@@ -38,8 +38,8 @@ export function createRenderer(canvas){
     for(let i=0;i<MAX_HP;i++){
       const on = i < hp;
       ctx.fillStyle = on ? (isPlayer ? 'rgba(56,217,150,0.9)' : 'rgba(255,77,77,0.9)') : 'rgba(255,255,255,0.12)';
-      const px = (i-(MAX_HP-1)/2)*20;
-      heart(px,0, 6);
+      const px = (i-(MAX_HP-1)/2)*50;
+      heart(px, 0, 6);
     }
     ctx.restore();
   }
@@ -148,7 +148,7 @@ export function createRenderer(canvas){
     g.addColorStop(0, 'rgba(255,255,255,0.05)');
     g.addColorStop(1, 'rgba(0,0,0,0.55)');
     ctx.fillStyle = g;
-    ctx.fillRect(0,0,w,h);
+    ctx.fillRect(0,0,w*1,h*0.9);
 
     ctx.fillStyle = 'rgba(0,0,0,0.35)';
     roundRect(ctx, w*0.08, h*0.55, w*0.84, h*0.32, 22);
@@ -190,11 +190,13 @@ export function createRenderer(canvas){
     ctx.fillStyle = 'rgba(233,236,241,0.92)';
     ctx.font = '700 14px system-ui, -apple-system, Segoe UI, Roboto';
     ctx.textAlign = 'center';
-    ctx.fillText('DEALER', w*0.22, h*0.16);
+    
     ctx.fillText('YOU', w*0.78, h*0.16);
-
-    drawHearts(w*0.22, h*0.20, state.dealerHP, false);
     drawHearts(w*0.78, h*0.20, state.playerHP, true);
+
+    ctx.fillText('DEALER', w*0.22, h*0.16);
+    drawHearts(w*0.22, h*0.20, state.dealerHP, false);
+    
   }
 
   return {

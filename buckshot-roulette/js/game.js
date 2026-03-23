@@ -75,11 +75,13 @@ export function shoot(state, shooter, target, logEvt, syncUI, dealerTurn){
   };
 
   setTimeout(()=>{
+    const switchTurn = true;
     if(shell === 'live'){
       if(target === 'player') state.playerHP = clamp(state.playerHP-1, 0, MAX_HP);
       if(target === 'dealer') state.dealerHP = clamp(state.dealerHP-1, 0, MAX_HP);
       logEvt(`${shooter[0].toUpperCase()+shooter.slice(1)} fired a LIVE round at ${target[0].toUpperCase()+target.slice(1)}. (-1 HP)`, 'bad');
     } else {
+      if (target == shooter) switchTurn = false;
       logEvt(`${shooter[0].toUpperCase()+shooter.slice(1)} fired a BLANK at ${target[0].toUpperCase()+target.slice(1)}.`, 'good');
     }
 
@@ -99,7 +101,7 @@ export function shoot(state, shooter, target, logEvt, syncUI, dealerTurn){
       return;
     }
 
-    state.turn = (state.turn === 'player') ? 'dealer' : 'player';
+    if (switchTurn) state.turn = (state.turn === 'player') ? 'dealer' : 'player';
     state.phase = state.turn;
 
     syncUI();

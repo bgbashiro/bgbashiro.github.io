@@ -72,9 +72,9 @@ export function syncUI(state, el){
   el.useBeer.disabled = !playerCanAct || state.items.beer<=0 || shellsLeft(state)<=0;
   el.useCigs.disabled = !playerCanAct || state.items.cigs<=0;
 
-  el.useMagnify.textContent = `🔍 Magnify (${state.items.magnify})`;
-  el.useBeer.textContent = `🍺 Beer (${state.items.beer})`;
-  el.useCigs.textContent = `🚬 Cigarettes (${state.items.cigs})`;
+  el.useMagnify.textContent = `🔍 (${state.items.magnify})`;
+  el.useBeer.textContent = `🍺 (${state.items.beer})`;
+  el.useCigs.textContent = `🚬 (${state.items.cigs})`;
 
   el.newRound.disabled = !(state.phase==='idle' || state.phase==='over');
 }
