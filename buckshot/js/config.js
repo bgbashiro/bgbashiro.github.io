@@ -21,8 +21,6 @@ export const TIMING = {
     skipTurn: 900,
 };
 
-export const CANVAS = { width: 960, height: 720 };
-
 export const COLORS = {
     bg: '#0d0d0f',
     table: '#1f3a2b',

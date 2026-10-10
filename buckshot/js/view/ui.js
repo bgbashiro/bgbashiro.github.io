@@ -3,11 +3,12 @@ import { LAYOUT, itemSlotRect } from './layout.js';
 
 // Interactive regions, rebuilt from state each frame so the renderer and the
 // input handler always agree on what is on screen.
-//   { rect, label?, itemId?, owner?, hotkey?, enabled, action, tooltip }
+//   { id, rect, label?, itemId?, owner?, hotkey?, enabled, action, tooltip }
 export function buildButtons(game, view) {
     const active = view.phase === 'playerTurn';
     const buttons = [
         {
+            id: 'shoot-dealer',
             rect: LAYOUT.shootDealer,
             label: 'SHOOT DEALER',
             hotkey: 'D',
@@ -16,6 +17,7 @@ export function buildButtons(game, view) {
             tooltip: 'Live: the dealer loses a charge. Either way, your turn ends.',
         },
         {
+            id: 'shoot-self',
             rect: LAYOUT.shootSelf,
             label: 'SHOOT SELF',
             hotkey: 'S',
@@ -29,6 +31,7 @@ export function buildButtons(game, view) {
         owner.items.forEach((itemId, index) => {
             const mine = owner.isPlayer;
             buttons.push({
+                id: `item-${owner.id}-${index}`,
                 rect: itemSlotRect(owner.id, index),
                 itemId,
                 owner: owner.id,

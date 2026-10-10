@@ -117,7 +117,7 @@ export class Controller {
         this.log.push(result.text);
         if (result.ejected) {
             const { live } = result.ejected;
-            this.fx.floatText(live ? 'LIVE' : 'BLANK', LAYOUT.shotgun.x + 200, LAYOUT.shotgun.y, live ? COLORS.live : COLORS.blank);
+            this.fx.floatText(live ? 'LIVE' : 'BLANK', LAYOUT.shellRow.x + 60, LAYOUT.shellRow.y - 30, live ? COLORS.live : COLORS.blank);
         }
         await sleep(TIMING.afterItem);
     }
