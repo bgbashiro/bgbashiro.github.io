@@ -1,0 +1,26 @@
+import { Controller } from './controller.js';
+import { Input } from './input.js';
+import { Game } from './model/game.js';
+import { Effects } from './view/effects.js';
+import { MessageLog } from './view/messageLog.js';
+import { Renderer } from './view/renderer.js';
+import { buildButtons } from './view/ui.js';
+
+const canvas = document.getElementById('game');
+
+const game = new Game();
+const view = { phase: 'title', overlay: null, loadPreview: null };
+const log = new MessageLog();
+const fx = new Effects();
+const getButtons = () => buildButtons(game, view);
+const input = new Input(canvas, getButtons);
+const renderer = new Renderer(canvas, { game, view, log, fx, input, getButtons });
+const controller = new Controller({ game, view, log, fx, input });
+
+function frame(t) {
+    fx.update(t);
+    renderer.render(t);
+    requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+controller.run();

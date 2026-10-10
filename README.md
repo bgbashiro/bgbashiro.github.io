@@ -28,3 +28,13 @@ I am just adding random "content" here. Most stuff I do for fun.
     - [ ] Level Editor
     - [x] Online leaderboard
     - [ ] Dialogue system
+
+## Buckshot (`buckshot/`)
+
+A Buckshot Roulette style game with placeholder canvas graphics. Plain ES modules, no build step.
+
+- `js/model/`: game rules (shotgun, participants, item registry, `Game`)
+- `js/ai/dealer.js`: dealer decision-making (uses only info the dealer could know)
+- `js/view/`: layout, drawing primitives, item icons, effects, renderer, clickable regions
+- `js/input.js`: pointer and keyboard input; `js/controller.js`: async turn loop and pacing
+- `tests/simulate.test.js`: headless AI-vs-AI rules check (`node buckshot/tests/simulate.test.js`)

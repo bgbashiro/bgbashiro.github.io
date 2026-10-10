@@ -1,0 +1,46 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #0d0d0f;
+    color: #e8e2d0;
+    font-family: "Courier New", monospace;
+}
+
+main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+#game {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 960 / 720;
+    border: 2px solid #2a2824;
+    border-radius: 8px;
+    touch-action: manipulation;
+    user-select: none;
+}
+
+.help {
+    line-height: 1.5;
+    color: #b8b2a0;
+}
+
+.help h2 {
+    color: #e8ac65;
+}
+
+.help a {
+    color: #e8ac65;
+}
+
+kbd {
+    border: 1px solid #555;
+    border-radius: 3px;
+    padding: 0 4px;
+}
