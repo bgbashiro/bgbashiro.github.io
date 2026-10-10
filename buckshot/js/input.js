@@ -1,8 +1,10 @@
-import { CANVAS } from './config.js';
-import { contains } from './view/layout.js';
+import { LAYOUT, contains } from './view/layout.js';
 
 // Turns pointer/keyboard events into game actions. The controller awaits
 // waitForAction() / waitForContinue(); everything else is ignored.
+//
+// Touch has no hover, so on touch/pen the first tap on an item only selects
+// it (showing its tooltip) and a second tap uses it.
 export class Input {
     constructor(canvas, getButtons) {
         this.canvas = canvas;
@@ -10,27 +12,46 @@ export class Input {
         this.mouse = { x: -1, y: -1 };
         this.resolveAction = null;
         this.resolveContinue = null;
+        // Best guess until the first pointer event tells us for sure.
+        this.pointerType = window.matchMedia?.('(pointer: coarse)').matches ? 'touch' : 'mouse';
+        this.selectedId = null;
 
         canvas.addEventListener('pointermove', (e) => {
+            this.pointerType = e.pointerType;
             this.mouse = this.toCanvas(e);
         });
         canvas.addEventListener('pointerleave', () => {
             this.mouse = { x: -1, y: -1 };
         });
-        canvas.addEventListener('pointerdown', (e) => this.handlePress(this.toCanvas(e)));
+        canvas.addEventListener('pointerdown', (e) => {
+            this.pointerType = e.pointerType;
+            this.handlePress(this.toCanvas(e));
+        });
         window.addEventListener('keydown', (e) => this.handleKey(e));
     }
 
     toCanvas(e) {
         const r = this.canvas.getBoundingClientRect();
         return {
-            x: ((e.clientX - r.left) * CANVAS.width) / r.width,
-            y: ((e.clientY - r.top) * CANVAS.height) / r.height,
+            x: ((e.clientX - r.left) * LAYOUT.width) / r.width,
+            y: ((e.clientY - r.top) * LAYOUT.height) / r.height,
         };
     }
 
+    get isTouch() {
+        return this.pointerType !== 'mouse';
+    }
+
+    // The button whose tooltip should show: under the mouse, or tap-selected.
     hoveredButton() {
-        return this.getButtons().find((b) => contains(b.rect, this.mouse)) ?? null;
+        const buttons = this.getButtons();
+        if (this.selectedId) return buttons.find((b) => b.id === this.selectedId) ?? null;
+        if (this.isTouch) return null;
+        return buttons.find((b) => contains(b.rect, this.mouse)) ?? null;
+    }
+
+    isSelected(button) {
+        return button !== null && button.id === this.selectedId;
     }
 
     get awaitingAction() {
@@ -38,6 +59,7 @@ export class Input {
     }
 
     waitForAction() {
+        this.selectedId = null;
         return new Promise((resolve) => {
             this.resolveAction = resolve;
         });
@@ -56,6 +78,7 @@ export class Input {
     }
 
     trigger(button) {
+        this.selectedId = null;
         if (!button?.enabled || !button.action || !this.resolveAction) return;
         const resolve = this.resolveAction;
         this.resolveAction = null;
@@ -68,7 +91,12 @@ export class Input {
             this.continue();
             return;
         }
-        this.trigger(this.getButtons().find((b) => contains(b.rect, pt)));
+        const button = this.getButtons().find((b) => contains(b.rect, pt)) ?? null;
+        if (this.isTouch && button?.itemId && !this.isSelected(button)) {
+            this.selectedId = button.id;
+            return;
+        }
+        this.trigger(button);
     }
 
     handleKey(e) {

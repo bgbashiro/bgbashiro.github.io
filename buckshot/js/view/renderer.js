@@ -1,7 +1,7 @@
-import { CANVAS, COLORS, MAX_ITEMS } from '../config.js';
+import { COLORS, MAX_ITEMS } from '../config.js';
 import { drawCharges, drawFace, drawShell, drawShotgun, fillRoundRect, text, wrapLines } from './draw.js';
 import { drawItemIcon } from './icons.js';
-import { LAYOUT, itemSlotRect } from './layout.js';
+import { LAYOUT, itemSlotRect, selectLayout } from './layout.js';
 
 // Draws the whole scene from game + view state. Holds no game logic.
 export class Renderer {
@@ -13,10 +13,13 @@ export class Renderer {
         window.addEventListener('resize', () => this.resize());
     }
 
+    // Pick portrait/landscape for the viewport and size the backing store.
     resize() {
+        selectLayout(window.innerWidth, window.innerHeight);
         const dpr = window.devicePixelRatio || 1;
-        this.canvas.width = CANVAS.width * dpr;
-        this.canvas.height = CANVAS.height * dpr;
+        this.canvas.width = LAYOUT.width * dpr;
+        this.canvas.height = LAYOUT.height * dpr;
+        this.canvas.style.setProperty('--aspect', `${LAYOUT.width / LAYOUT.height}`);
         this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
@@ -27,7 +30,7 @@ export class Renderer {
         this.gunAngle += (this.fx.aimAngle - this.gunAngle) * 0.18;
 
         ctx.fillStyle = COLORS.bg;
-        ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
+        ctx.fillRect(0, 0, LAYOUT.width, LAYOUT.height);
 
         const shake = this.fx.shakeOffset(t);
         ctx.save();
@@ -46,7 +49,7 @@ export class Renderer {
         this.drawFlashes(t);
         if (this.view.loadPreview) this.drawLoadPreview();
         if (this.view.overlay) this.drawOverlay(t);
-        else if (hovered) this.drawTooltip(hovered.tooltip);
+        else if (hovered) this.drawTooltip(hovered);
     }
 
     drawTable() {
@@ -76,7 +79,7 @@ export class Renderer {
         text(ctx, `ROUND ${game.roundIndex + 1}`, x, y, { size: 18, align: 'right', weight: 'bold' });
         if (game.lastLoad) {
             const { live, blank } = game.lastLoad;
-            text(ctx, `loaded: ${live} live / ${blank} blank`, x, y + 24, { size: 14, color: COLORS.dim, align: 'right' });
+            text(ctx, `${live} live / ${blank} blank`, x, y + 24, { size: 14, color: COLORS.dim, align: 'right' });
         }
     }
 
@@ -87,7 +90,7 @@ export class Renderer {
         }
         for (const b of buttons.filter((b) => b.itemId)) {
             const usable = b.enabled;
-            const fill = b === hovered && usable ? COLORS.buttonHover : COLORS.button;
+            const fill = b.id === hovered?.id ? COLORS.buttonHover : COLORS.button;
             fillRoundRect(ctx, b.rect, fill, 8, usable ? COLORS.accent : null);
             ctx.globalAlpha = b.owner === 'player' && !usable && this.view.phase === 'playerTurn' ? 0.4 : 1;
             drawItemIcon(ctx, b.itemId, b.rect.x + b.rect.w / 2, b.rect.y + b.rect.h / 2, b.rect.w);
@@ -116,18 +119,19 @@ export class Renderer {
         ctx.translate(x, y + 25);
         ctx.rotate(this.gunAngle);
         // Shrink while aimed so the gun doesn't sweep over the item rows.
-        const scale = 1 - 0.3 * Math.abs(Math.sin(this.gunAngle));
+        const scale = LAYOUT.shotgun.scale * (1 - 0.3 * Math.abs(Math.sin(this.gunAngle)));
         ctx.scale(scale, scale);
         drawShotgun(ctx, this.game.shotgun.sawed);
         ctx.restore();
         if (this.game.shotgun.sawed) {
-            text(ctx, 'SAWED OFF: x2 DAMAGE', x + 140, y + 70, { size: 13, color: COLORS.danger, align: 'center', weight: 'bold' });
+            const row = LAYOUT.shellRow;
+            text(ctx, 'SAWED OFF: x2 DAMAGE', row.x, row.y + row.size + 34, { size: 13, color: COLORS.danger, weight: 'bold' });
         }
     }
 
     drawActionButtons(buttons, hovered) {
         for (const b of buttons.filter((b) => b.label)) {
-            const fill = !b.enabled ? COLORS.buttonDisabled : b === hovered ? COLORS.buttonHover : COLORS.button;
+            const fill = !b.enabled ? COLORS.buttonDisabled : b.id === hovered?.id ? COLORS.buttonHover : COLORS.button;
             fillRoundRect(this.ctx, b.rect, fill, 8, b.enabled ? COLORS.accent : '#333');
             text(this.ctx, b.label, b.rect.x + b.rect.w / 2, b.rect.y + b.rect.h / 2 + 1, {
                 size: 18, align: 'center', baseline: 'middle', weight: 'bold',
@@ -174,7 +178,7 @@ export class Renderer {
         for (const f of this.fx.flashes) {
             this.ctx.globalAlpha = 0.7 * (1 - (t - f.start) / f.duration);
             this.ctx.fillStyle = f.color;
-            this.ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
+            this.ctx.fillRect(0, 0, LAYOUT.width, LAYOUT.height);
         }
         this.ctx.globalAlpha = 1;
     }
@@ -182,7 +186,9 @@ export class Renderer {
     drawLoadPreview() {
         const { ctx } = this;
         const { live, blank } = this.view.loadPreview;
-        const box = { x: 230, y: 250, w: 500, h: 160 };
+        const { table } = LAYOUT;
+        const w = Math.min(500, table.w - 40);
+        const box = { x: table.x + (table.w - w) / 2, y: table.y + table.h / 2 - 80, w, h: 160 };
         fillRoundRect(ctx, box, 'rgba(0,0,0,0.85)', 12, COLORS.accent);
         text(ctx, `${live} LIVE  /  ${blank} BLANK`, box.x + box.w / 2, box.y + 36, { size: 24, align: 'center', weight: 'bold' });
         const kinds = [...Array(live).fill('live'), ...Array(blank).fill('blank')];
@@ -199,27 +205,39 @@ export class Renderer {
         const { ctx } = this;
         const { title, subtitle, prompt } = this.view.overlay;
         ctx.fillStyle = 'rgba(0,0,0,0.78)';
-        ctx.fillRect(0, 0, CANVAS.width, CANVAS.height);
-        const cx = CANVAS.width / 2;
-        text(ctx, title, cx, 300, { size: 52, align: 'center', weight: 'bold', color: COLORS.accent });
-        (Array.isArray(subtitle) ? subtitle : [subtitle]).filter(Boolean).forEach((line, i) => {
-            text(ctx, line, cx, 350 + i * 26, { size: 18, align: 'center' });
-        });
+        ctx.fillRect(0, 0, LAYOUT.width, LAYOUT.height);
+        const cx = LAYOUT.width / 2;
+        const maxWidth = LAYOUT.width - 40;
+        // Monospace glyphs are ~0.6em wide; shrink the title to fit narrow screens.
+        const titleSize = Math.min(52, Math.floor(maxWidth / (title.length * 0.6)));
+        let y = LAYOUT.height * 0.4;
+        text(ctx, title, cx, y, { size: titleSize, align: 'center', weight: 'bold', color: COLORS.accent });
+        y += 50;
+        for (const para of (Array.isArray(subtitle) ? subtitle : [subtitle]).filter(Boolean)) {
+            for (const line of wrapLines(ctx, para, maxWidth, 18)) {
+                text(ctx, line, cx, y, { size: 18, align: 'center' });
+                y += 26;
+            }
+        }
         if (prompt) {
             ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t / 300);
-            text(ctx, prompt, cx, 520, { size: 18, align: 'center', color: COLORS.dim });
+            const tapPrompt = this.input.isTouch ? 'Tap to continue' : prompt;
+            text(ctx, tapPrompt, cx, Math.max(y + 60, LAYOUT.height * 0.72), { size: 18, align: 'center', color: COLORS.dim });
             ctx.globalAlpha = 1;
         }
     }
 
-    drawTooltip(tip) {
-        if (!tip) return;
+    // Tooltip anchored above the button (below it if there's no room).
+    drawTooltip(button) {
+        if (!button.tooltip) return;
         const { ctx } = this;
-        const lines = wrapLines(ctx, tip, 260, 13);
-        const w = 280;
+        const tip = this.input.isSelected(button) && button.enabled ? `${button.tooltip} Tap again to use.` : button.tooltip;
+        const w = Math.min(280, LAYOUT.width - 8);
+        const lines = wrapLines(ctx, tip, w - 20, 13);
         const h = lines.length * 17 + 12;
-        const x = Math.min(this.input.mouse.x + 14, CANVAS.width - w - 4);
-        const y = Math.max(4, this.input.mouse.y - h - 10);
+        const { rect } = button;
+        const x = Math.max(4, Math.min(rect.x + rect.w / 2 - w / 2, LAYOUT.width - w - 4));
+        const y = rect.y - h - 6 >= 4 ? rect.y - h - 6 : rect.y + rect.h + 6;
         fillRoundRect(ctx, { x, y, w, h }, 'rgba(20,20,18,0.95)', 6, COLORS.dim);
         lines.forEach((line, i) => text(ctx, line, x + 10, y + 19 + i * 17, { size: 13 }));
     }

@@ -15,15 +15,35 @@ main {
     padding: 16px;
 }
 
+/* --aspect is set from JS to match the active layout; the canvas fits both
+   the page width and the viewport height. */
 #game {
     display: block;
-    width: 100%;
+    width: min(100%, calc((100dvh - 16px) * var(--aspect, 1.3333)));
     height: auto;
-    aspect-ratio: 960 / 720;
+    margin: 0 auto;
+    aspect-ratio: var(--aspect, 1.3333);
     border: 2px solid #2a2824;
     border-radius: 8px;
     touch-action: manipulation;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 8px 4px;
+    }
+
+    #game {
+        border-width: 1px;
+    }
+
+    .help {
+        padding: 0 8px;
+        font-size: 14px;
+    }
 }
 
 .help {
