@@ -208,26 +208,70 @@ input[type="text"]:focus {
     outline-offset: 2px;
 }
 
-/* ---------- Hall of Fame ---------- */
+/* ---------- Hall of Fame (neon purple) ---------- */
+
+#halloffame,
+#leaderboard {
+    background: transparent;
+    border: none;
+    border-radius: 15px;
+}
+
+#halloffame .panel-title,
+#leaderboard .panel-title {
+    margin: 4px 0 18px;
+    font-family: "VT323", monospace;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#halloffame {
+    box-shadow: inset 0 0 80px #9029e457, 0 0 5px #bf77fad0;
+}
+
+#halloffame .panel-title { color: #6f00ff; }
+
+#halloffame .empty,
+#leaderboard .empty {
+    font-family: "VT323", monospace;
+    font-size: 22px;
+    text-align: center;
+}
+
+#halloffame .empty { color: #e956d5d5; }
 
 .hof-entry {
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line);
+    margin: 11px 5px 5px;
+    padding: 10px;
+    border-radius: 9px;
+    box-shadow: inset 0 0 40px #c529e41c, 0 0 2px #e429e457;
+    color: #e956d5d5;
+    text-align: center;
+    font-family: "VT323", monospace;
+    font-size: 22px;
 }
 
 .hof-entry p {
-    margin: 0 0 4px;
-    font-size: 15px;
-    line-height: 1.4;
+    margin: 0;
+    line-height: 1.2;
     overflow-wrap: anywhere;
 }
 
-.hof-author {
-    font-size: 12px;
-    color: var(--muted);
+.hof-author { color: #ae56e9d5; }
+
+@keyframes halloffame-own-entry-blink {
+    0%, 50%, 100% { color: #c529e41c; }
+    25%, 75% { color: #351c04; }
 }
 
-.hof-entry.is-own .hof-author { color: var(--accent); }
+.hof-entry.is-own {
+    font-weight: 900;
+    animation: halloffame-own-entry-blink 1.5s 1;
+}
 
 .halloffame-entry {
     display: flex;
@@ -236,45 +280,99 @@ input[type="text"]:focus {
     margin-top: 14px;
 }
 
+.halloffame-entry input[type="text"] {
+    font-family: "VT323", monospace;
+    font-size: 24px;
+    color: #e956d5d5;
+    background: transparent;
+    border: 1px solid #e429e457;
+}
+
+.halloffame-entry input[type="text"]:focus {
+    border-color: #bf77fad0;
+    box-shadow: 0 0 8px #9029e457;
+}
+
 .halloffame-entry input[type="submit"] {
-    font: inherit;
-    font-size: 14px;
-    padding: 10px 12px;
-    color: #0a0b0e;
-    background: var(--text);
-    border: 1px solid var(--text);
+    font-family: "VT323", monospace;
+    font-size: 24px;
+    padding: 6px 12px;
+    color: #e956d5d5;
+    background: transparent;
+    border: 1px solid #e429e457;
     border-radius: 8px;
     cursor: pointer;
+    transition: 0.8s;
+}
+
+.halloffame-entry input[type="submit"]:hover {
+    color: #f3a6ea;
+    text-shadow: 0 0 15px #e429e4;
+    box-shadow: inset 0 0 25px #9029e457, 0 0 10px #bf77fad0;
 }
 
 #gravicoinBalance {
     margin: 0;
-    font-size: 13px;
-    color: var(--muted);
+    font-family: "VT323", monospace;
+    font-size: 20px;
+    color: #ae56e9d5;
     text-align: right;
-    font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Leaderboard ---------- */
+/* ---------- Leaderboard (neon orange, flickering) ---------- */
+
+@keyframes leaderboard-blink {
+    0%, 100% { box-shadow: inset 0 0 60px #e48c2957, 0 0 5px #fabd77d0; }
+    56%, 96% { box-shadow: inset 0 0 80px #e48c2957, 0 0 5px #fabd77d0; }
+    68% { box-shadow: inset 0 0 50px #e48c2957, 0 0 5px #fabd77d0; }
+    75% { box-shadow: inset 0 0 90px #e48c2957, 0 0 5px #fabd77d0; }
+    98% { box-shadow: inset 0 0 0 #e48d295d, 0 0 5px #fabd77d0; }
+}
+
+@keyframes leaderboard-text-blink {
+    0% { color: #ff7b00; }
+    95%, 98% { color: #ff8615; }
+    96%, 99% { color: #351c04; }
+    100% { color: #ffb067; }
+}
+
+#leaderboard {
+    box-shadow: inset 0 0 80px #e48c2957, 0 0 5px #fabd77d0;
+    animation: leaderboard-blink 8s infinite;
+}
+
+#leaderboard .panel-title {
+    color: #ff7b00;
+    animation: leaderboard-text-blink 11s infinite;
+}
 
 .level-label {
     margin: 0 0 12px;
-    font-size: 13px;
-    color: var(--muted);
+    font-family: "VT323", monospace;
+    font-size: 25px;
+    font-weight: 900;
+    color: #ff7b00;
+    text-align: center;
 }
+
+#leaderboard .empty { color: #e9b656d5; }
 
 .lb-entry {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 15px;
+    margin: 11px 5px 5px;
+    padding: 10px 14px;
+    border-radius: 9px;
+    box-shadow: inset 0 0 40px #e48d291c, 0 0 2px #e48c2957;
+    color: #e9b656d5;
+    font-family: "VT323", monospace;
+    font-size: 22px;
 }
 
 .lb-rank {
     width: 24px;
-    color: var(--muted);
+    color: #ff7b00;
     font-variant-numeric: tabular-nums;
 }
 
@@ -286,13 +384,23 @@ input[type="text"]:focus {
     white-space: nowrap;
 }
 
-.lb-score {
-    font-weight: 600;
-    font-variant-numeric: tabular-nums;
+.lb-score { font-variant-numeric: tabular-nums; }
+
+@keyframes leaderboard-own-entry-blink {
+    0%, 50%, 100% { color: #e48d29c5; }
+    25%, 75% { color: #351c04; }
 }
 
-.lb-entry.is-own .lb-name,
-.lb-entry.is-own .lb-score { color: var(--accent); }
+.lb-entry.is-own {
+    box-shadow: inset 0 0 40px #e48d29c5, 0 0 2px #e48d29de;
+    font-weight: 900;
+    animation: leaderboard-own-entry-blink 1.5s 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #leaderboard,
+    #leaderboard .panel-title { animation: none; }
+}
 
 /* ---------- narrow screens: stack the panels under the game ---------- */
 
