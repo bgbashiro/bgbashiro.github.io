@@ -4,39 +4,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=VT323">
+    <title>Graviminer</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="main">
-        <div id="halloffame">
-            <h1>HALL OF FAME</h1>
-            <ol>
-            </ol>
-            <form class="halloffame-entry">
-                <input type="text">
-                <input type="submit" value="100🪙">
-                <div><p id="gravicoinBalance"></p></div>
-            </form>
-        </div>
-        <div id="canvasContainer"></div>
+    <main class="layout">
 
-        <div id="leaderboard">
-            <h1>LEADERBOARD</h1>
-            <ol>
-            </ol>
-        </div>
-    </div>
+        <aside id="halloffame" class="panel">
+            <h2 class="panel-title">Hall of Fame</h2>
+            <ol class="list"></ol>
+            <form class="halloffame-entry">
+                <input type="text" maxlength="140" placeholder="Leave a message" autocomplete="off">
+                <input type="submit" value="Post · 100 🪙">
+                <p id="gravicoinBalance"></p>
+            </form>
+        </aside>
+
+        <section id="stage">
+            <canvas id="game" width="800" height="800" aria-label="Graviminer game"></canvas>
+            <div id="menu" class="menu">
+                <div id="screen-login" class="screen" hidden>
+                    <button id="loginBtn" class="btn primary" type="button">Login with Google</button>
+                </div>
+
+                <div id="screen-username" class="screen" hidden>
+                    <p id="usernameMsg" class="msg">Enter your username</p>
+                    <form id="usernameForm" class="inline">
+                        <input id="usernameInput" type="text" maxlength="24" autocomplete="off">
+                        <button class="btn primary" type="submit">Enter</button>
+                    </form>
+                </div>
+
+                <div id="screen-home" class="screen" hidden>
+                    <div class="info">
+                        <p>You are a pilot controlling a spaceship in deep space. Your goal is to collect as many
+                            "gravitanium" crystals as possible in 60 seconds. They are purplish crystals scattered
+                            around, and you will recognize them when you see them. They help make space travel
+                            possible by bending gravity.</p>
+                        <p>The mouse pointer is the centre of gravity pulling the spaceship. Hold SPACEBAR to
+                            increase the pull. Head to "Tutorial", move the pointer around and press SPACEBAR at
+                            times to get the feel for it.</p>
+                        <p>You are paid in "gravicoins": 1 per crystal on levels 2–4, 2 per crystal on levels 5–7,
+                            and 3 per crystal on level 8. The tutorial pays nothing. Spend coins to post to the
+                            Hall of Fame on the left, and check the leaderboard on the right to see how other pilots
+                            are doing.</p>
+                    </div>
+                    <div id="levels" class="levels"></div>
+                    <button id="signoutBtn" class="btn ghost" type="button">Sign out</button>
+                </div>
+            </div>
+        </section>
+
+        <aside id="leaderboard" class="panel">
+            <h2 class="panel-title">Leaderboard</h2>
+            <p class="level-label"></p>
+            <ol class="list"></ol>
+        </aside>
+
+    </main>
 
     <script type="module" src="firebaseconnect.js"></script>
-    <script src="p5.min.js"></script>
-    <script src="p5.sound.min.js"></script>
-    <script src="entities.js"></script>
-    <script src="collision.js"></script>
     <script src="boards.js"></script>
-    <script src="sketch.js"></script>
+    <script src="game.js"></script>
 </body>
 
 </html>
