@@ -4,9 +4,15 @@ import { Game } from './model/game.js';
 import { Effects } from './view/effects.js';
 import { MessageLog } from './view/messageLog.js';
 import { Renderer } from './view/renderer.js';
+import { FONTS } from './view/theme.js';
 import { buildButtons } from './view/ui.js';
 
 const canvas = document.getElementById('game');
+
+// Canvas text doesn't trigger web-font downloads on its own; request them up
+// front. The render loop redraws every frame, so they appear once loaded.
+document.fonts?.load(`20px ${FONTS.display}`);
+document.fonts?.load(`20px ${FONTS.body}`);
 
 const game = new Game();
 const view = { phase: 'title', overlay: null, loadPreview: null };

@@ -1,8 +1,9 @@
 import { decideAction } from './ai/dealer.js';
-import { COLORS, ROUNDS, TIMING } from './config.js';
+import { ROUNDS, TIMING } from './config.js';
 import { ITEMS } from './model/items.js';
 import { sleep } from './utils.js';
 import { LAYOUT } from './view/layout.js';
+import { COLORS } from './view/theme.js';
 
 // Async game loop: sequences the rules (Game), the dealer AI, player input,
 // pacing and effects. Mutates `view` so the renderer knows what to show.
@@ -47,7 +48,7 @@ export class Controller {
                 `${hp} charges each.`,
                 itemsPerLoad ? `${itemsPerLoad} items dealt every reload.` : 'No items this round.',
             ], { waitForInput: false });
-            this.log.push(`--- Round ${r + 1} ---`, COLORS.accent);
+            this.log.push(`--- Round ${r + 1} ---`, 'accent');
 
             const winner = await this.playRound();
             if (winner === game.dealer) {
@@ -55,7 +56,7 @@ export class Controller {
                 return;
             }
             if (game.isFinalRound) {
-                await this.banner('YOU WIN', 'You walk away with the cash. For now.');
+                await this.banner('YOU WIN', 'You ride off with the cash. For now.');
                 return;
             }
             await this.banner('ROUND WON', 'The dealer resets the table...');
@@ -79,7 +80,7 @@ export class Controller {
         this.view.phase = 'loading';
         const { live, blank, dealt } = this.game.reload();
         this.view.loadPreview = { live, blank };
-        this.log.push(`The dealer loads ${live} live and ${blank} blank shells.`, COLORS.accent);
+        this.log.push(`The dealer loads ${live} live and ${blank} blank shells.`, 'accent');
         if (dealt.player.length) {
             this.log.push(`You receive: ${dealt.player.map((id) => ITEMS[id].name).join(', ')}.`);
         }
@@ -135,15 +136,15 @@ export class Controller {
             : { x: LAYOUT.dealerFace.x, y: LAYOUT.dealerFace.y + 40 };
 
         if (res.shell.live) {
-            this.fx.flash('#ffffff', 260);
+            this.fx.flash(COLORS.muzzle, 260);
             this.fx.shake(18, 380);
             this.fx.floatText(`-${res.damage}`, hitPos.x, hitPos.y, COLORS.danger);
             if (!target.isPlayer) this.fx.hurtDealer();
             const charges = res.damage > 1 ? `${res.damage} charges` : 'a charge';
-            this.log.push(target.isPlayer ? `BANG! You lose ${charges}.` : `BANG! The dealer loses ${charges}.`, COLORS.live);
+            this.log.push(target.isPlayer ? `BANG! You lose ${charges}.` : `BANG! The dealer loses ${charges}.`, 'live');
         } else {
             this.fx.floatText('click', hitPos.x, hitPos.y, COLORS.blank);
-            this.log.push('*click* ... blank.', COLORS.blank);
+            this.log.push('*click* ... blank.', 'blank');
             if (res.keepsTurn) this.log.push(shooter.isPlayer ? 'You keep your turn.' : 'The dealer goes again.');
         }
         await sleep(TIMING.afterShot);
@@ -151,8 +152,8 @@ export class Controller {
 
         if (res.skipped && !this.game.roundWinner) {
             this.log.push(res.skipped.isPlayer
-                ? 'You are cuffed and lose your turn. The cuffs come off.'
-                : 'The dealer is cuffed and loses the turn.', COLORS.dim);
+                ? 'You are roped up and lose your turn. You wriggle free.'
+                : 'The dealer is roped up and loses the turn.', 'dim');
             await sleep(TIMING.skipTurn);
         }
     }

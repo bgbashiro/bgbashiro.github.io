@@ -19,6 +19,7 @@ const LANDSCAPE = {
     shootDealer: { x: 40, y: 640, w: 200, h: 52 },
     shootSelf: { x: 256, y: 640, w: 200, h: 52 },
     log: { x: 480, y: 528, w: 450, h: 172 },
+    poster: { x: 300, y: 18, w: 78, h: 104 },
 };
 
 const PORTRAIT = {
@@ -36,6 +37,7 @@ const PORTRAIT = {
     shootDealer: { x: 12, y: 652, w: 222, h: 56 },
     shootSelf: { x: 246, y: 652, w: 222, h: 56 },
     log: { x: 12, y: 718, w: 456, h: 104 },
+    poster: null,
 };
 
 export const LAYOUT = { ...LANDSCAPE };

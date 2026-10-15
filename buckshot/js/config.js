@@ -1,4 +1,5 @@
-// Tunable game constants. Everything balance- or layout-related lives here.
+// Tunable game constants (balance and pacing). Visuals live in view/theme.js,
+// screen positions in view/layout.js.
 
 // Each round raises the stakes: more charges (HP) and more items per reload.
 export const ROUNDS = [
@@ -19,24 +20,4 @@ export const TIMING = {
     afterShot: 1000,
     afterItem: 900,
     skipTurn: 900,
-};
-
-export const COLORS = {
-    bg: '#0d0d0f',
-    table: '#1f3a2b',
-    tableEdge: '#0f1f16',
-    slot: '#163024',
-    live: '#d83a3a',
-    blank: '#5f7a96',
-    unknown: '#3a3a3a',
-    text: '#e8e2d0',
-    dim: '#8a8474',
-    accent: '#e8ac65',
-    charge: '#ffcb69',
-    chargeEmpty: '#3b362b',
-    danger: '#ff4d4d',
-    button: '#2c2a26',
-    buttonHover: '#45413a',
-    buttonDisabled: '#1a1917',
-    face: '#d9d2bf',
 };

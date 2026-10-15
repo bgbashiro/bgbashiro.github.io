@@ -5,8 +5,9 @@ export class MessageLog {
         this.entries = [];
     }
 
-    push(textStr, color = null) {
-        this.entries.push({ text: textStr, color, time: performance.now() });
+    // tag: 'default' | 'accent' | 'live' | 'blank' | 'dim'; the theme picks the ink.
+    push(textStr, tag = 'default') {
+        this.entries.push({ text: textStr, tag, time: performance.now() });
         if (this.entries.length > MAX_ENTRIES) this.entries.shift();
     }
 
