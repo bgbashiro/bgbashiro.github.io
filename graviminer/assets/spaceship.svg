@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="-25 -25 50 50">
+  <title>Graviminer ship</title>
+  <defs>
+    <radialGradient id="hull" cx="0.35" cy="0.3" r="0.75">
+      <stop offset="0" stop-color="#f2f2f2"/>
+      <stop offset="0.55" stop-color="#9a9a9a"/>
+      <stop offset="1" stop-color="#3c3c3c"/>
+    </radialGradient>
+  </defs>
+  <circle r="24.5" fill="url(#hull)"/>
+  <path d="M-24.5 0 H24.5 M0 -24.5 V24.5" stroke="#555" stroke-width="1"/>
+  <path d="M-21 -13 Q0 -6 21 -13 M-21 13 Q0 6 21 13" fill="none" stroke="#555" stroke-width="1"/>
+  <rect x="-12" y="-19" width="6" height="4" fill="#666"/>
+  <rect x="5" y="-9" width="7" height="5" fill="#6d6d6d"/>
+  <rect x="-15" y="4" width="8" height="5" fill="#5e5e5e"/>
+  <rect x="8" y="10" width="5" height="4" fill="#707070"/>
+  <circle cx="-7" cy="-4" r="4" fill="#444" stroke="#888" stroke-width="1"/>
+  <circle r="24.5" fill="none" stroke="#2a2a2a" stroke-width="1"/>
+</svg>

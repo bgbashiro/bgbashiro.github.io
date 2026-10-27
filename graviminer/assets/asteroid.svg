@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26">
+  <title>Graviminer asteroid</title>
+  <defs>
+    <radialGradient id="rock" cx="0.35" cy="0.3" r="0.8">
+      <stop offset="0" stop-color="#a89a8c"/>
+      <stop offset="0.6" stop-color="#6e6358"/>
+      <stop offset="1" stop-color="#3e3630"/>
+    </radialGradient>
+  </defs>
+  <polygon points="-11,-4 -7,-10 1,-12 8,-9 12,-2 10,6 4,11 -4,12 -10,7 -12,1" fill="url(#rock)" stroke="#2b2622" stroke-width="1"/>
+  <circle cx="-3" cy="-3" r="3" fill="#574d44" stroke="#3a332d" stroke-width="0.6"/>
+  <circle cx="5" cy="4" r="2" fill="#574d44" stroke="#3a332d" stroke-width="0.5"/>
+  <circle cx="-5" cy="6" r="1.5" fill="#574d44"/>
+  <circle cx="4" cy="-6" r="1" fill="#574d44"/>
+</svg>

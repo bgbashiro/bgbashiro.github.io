@@ -19,6 +19,8 @@
   const ORE_R = 10;
   const ORE_SIZE = 30;
   const ROD_WIDTH = 4;
+  const ROCK_SIZE = 26;
+  const ROCK_SPACING = 34;
 
   const MAX_FUEL = 100;
   const MAX_HEALTH = 100;
@@ -143,9 +145,11 @@
 
   // ---------- assets ----------
   const shipImg = new Image();
-  shipImg.src = "assets/spaceship.png";
+  shipImg.src = "assets/spaceship.svg";
   const oreImg = new Image();
-  oreImg.src = "assets/amethyst.png";
+  oreImg.src = "assets/amethyst.svg";
+  const rockImg = new Image();
+  rockImg.src = "assets/asteroid.svg";
   const imgReady = (img) => img.complete && img.naturalWidth > 0;
 
   // ---------- music (one track at a time) ----------
@@ -175,10 +179,30 @@
   // ---------- helpers ----------
   const isWorld = (s) => s === "INTRO" || s === "GAME" || s === "OUTRO";
 
+  // Asteroids strung evenly along a rod, endpoints included. Rotation and size come
+  // from a running index (golden-angle steps) so the belt looks irregular but stable.
+  function rodRocks(x1, y1, x2, y2, first) {
+    const n = Math.max(1, Math.round(Math.hypot(x2 - x1, y2 - y1) / ROCK_SPACING));
+    const rocks = [];
+    for (let i = 0; i <= n; i++) {
+      const k = first + i;
+      rocks.push({
+        x: x1 + ((x2 - x1) * i) / n,
+        y: y1 + ((y2 - y1) * i) / n,
+        angle: (k * 2.39996) % (Math.PI * 2),
+        size: ROCK_SIZE * (0.85 + 0.3 * ((k * 0.618034) % 1)),
+      });
+    }
+    return rocks;
+  }
+
   function levelRods(level) {
-    return [...BORDER, ...(LEVEL_RODS[level] || [])].map(([x1, y1, x2, y2]) => ({
-      x1, y1, x2, y2, hit: false,
-    }));
+    let count = 0;
+    return [...BORDER, ...(LEVEL_RODS[level] || [])].map(([x1, y1, x2, y2]) => {
+      const rocks = rodRocks(x1, y1, x2, y2, count);
+      count += rocks.length;
+      return { x1, y1, x2, y2, hit: false, rocks };
+    });
   }
 
   function levelLabel() {
@@ -301,7 +325,31 @@
   }
 
   // ---------- rendering ----------
+  // Rods are drawn as asteroid belts; a rod being hit glows red.
   function drawRods() {
+    if (!imgReady(rockImg)) {
+      drawRodLines();
+      return;
+    }
+    for (const r of state.rods) {
+      if (r.hit) {
+        ctx.shadowColor = COLOR.rodHit;
+        ctx.shadowBlur = 14;
+      }
+      for (const rock of r.rocks) {
+        const half = rock.size / 2;
+        ctx.save();
+        ctx.translate(rock.x, rock.y);
+        ctx.rotate(rock.angle);
+        ctx.drawImage(rockImg, -half, -half, rock.size, rock.size);
+        ctx.restore();
+      }
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  // Fallback while the asteroid image is loading.
+  function drawRodLines() {
     ctx.lineCap = "round";
     ctx.lineWidth = ROD_WIDTH;
 
